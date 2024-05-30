@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compiled status Form</title>
-    <style>body {
+    <title>Compiled Status Form</title>
+    <style>
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f3f4f6;
             margin: 0;
@@ -96,7 +97,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-}
+        }
     </style>
 </head>
 <body>
@@ -116,16 +117,13 @@
             </select><br>
 
             <button id="nextButton" type="button" onclick="handleNext()">Next</button>
-            <form id="compiledForm" action="https://script.google.com/u/0/home/projects/1zOOihspzAhBpAJLiHx1qyJIeHALnmCRILUsmHGFcIq5ussr6SVzpwIZ2/edit" method="POST">
-            <input type="hidden" id="formType" name="formType" value="">
-            <input type="hidden" id="sheetId" name="sheetId" value="https://docs.google.com/spreadsheets/d/10yg7JXW0Zkx6KU861ptc3t3VqFBJF-qUwYw_7svWlbY/edit#gid=0">
         </form>
     </div>
 
     <!-- Yes Page -->
     <div id="yes" class="container" style="display: none;">
         <h1>Compiled</h1>
-        <form onsubmit="handleSubmit(event)">
+        <form id="compiledForm" action="https://script.google.com/macros/s/AKfycbzBQHfnF9xuixxdsukU5RD_BYYpBdC80t8bs0R7xu-Svk443I7bxidprxeRGzL6I_1EuA/exec" method="POST">
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
@@ -134,23 +132,24 @@
 
             <button type="submit">Submit</button>
             <button class="back-button" onclick="backToIndex()">Back</button>
-            <div id="yesSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
+            <div id="yesSuccessMessage" style="display: none;">
+                <p>Your response has been recorded.</p>
+            </div>
         </form>
     </div>
 
     <!-- No Page -->
     <div id="no" class="container" style="display: none;">
         <h1>Not Compiled</h1>
-        <form onsubmit="handleSubmit(event)">
+        <form id="noCompiledForm" action="YOUR_WEB_APP_URL" method="POST">
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
-            <label for="updatedDate">Updated Date:</label>
-            <input type="date" id="updatedDate" name="updatedDate" required><br>
-
             <button type="submit">Submit</button>
             <button class="back-button" onclick="backToIndex()">Back</button>
-            <div id="noSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
+            <div id="noSuccessMessage" style="display: none;">
+                <p>Your response has been recorded.</p>
+            </div>
         </form>
     </div>
 
@@ -158,26 +157,41 @@
         function handleNext() {
             const dropdown = document.getElementById("yesNoDropdown").value;
             if (dropdown === "yes") {
-                document.getElementById("formType").value = "Compiled";
-                document.getElementById("compiledForm").submit();
+                document.getElementById("index").style.display = "none";
+                document.getElementById("yes").style.display = "block";
             } else if (dropdown === "no") {
-                document.getElementById("formType").value = "Not Compiled";
-                document.getElementById("compiledForm").submit();
+                document.getElementById("index").style.display = "none";
+                document.getElementById("no").style.display = "block";
             }
-        }
-        
-        function handleSubmit(event, successMessageId) {
-            event.preventDefault();
-            // Show success message
-            document.getElementById(successMessageId).style.display = "block";
-            document.getElementById(successMessageId).reset();
         }
 
         function backToIndex() {
+            document.getElementById("index").style.display = "block";
             document.getElementById("yes").style.display = "none";
             document.getElementById("no").style.display = "none";
-            document.getElementById("index").style.display = "block";
+            document.getElementById("yesSuccessMessage").style.display = "none";
+            document.getElementById("noSuccessMessage").style.display = "none";
         }
+
+        // Add event listener to the compiled form
+        document.getElementById("compiledForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", event.target.action);
+            xhr.send(formData);
+            document.getElementById("yesSuccessMessage").style.display = "block";
+        });
+
+        // Add event listener to the no compiled form
+        document.getElementById("noCompiledForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", event.target.action);
+            xhr.send(formData);
+            document.getElementById("noSuccessMessage").style.display = "block";
+        });
     </script>
 </body>
 </html>
