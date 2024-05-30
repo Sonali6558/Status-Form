@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compiled Status Form</title>
     <style>
-        body {
+         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f3f4f6;
             margin: 0;
@@ -123,7 +123,9 @@
     <!-- Yes Page -->
     <div id="yes" class="container" style="display: none;">
         <h1>Compiled</h1>
-        <form id="compiledForm" action="https://script.google.com/macros/s/AKfycbw6D11FlxXJQaw8ud6z-D8pSeFUsmB68LQQoApKKBLglJOFw0RTPI2eoMzLLA6Cs_hgtw/exec" method="POST">
+        <form id="compiledForm" action="https://script.google.com/macros/s/AKfycbw6D11FlxXJQaw8ud6z-D8pSeFUsmB68LQQoApKKBLglJOFw0RTPI2eoMzLLA6Cs_hgtw/exec" method="POST" enctype="multipart/form-data">
+            <input type="hidden" id="emailYes" name="email">
+            <input type="hidden" name="formType" value="compiled">
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
@@ -131,7 +133,7 @@
             <input type="file" id="fileUpload" name="fileUpload" required><br>
 
             <button type="submit">Submit</button>
-            <button class="back-button" onclick="backToIndex()">Back</button>
+            <button type="button" class="back-button" onclick="backToIndex()">Back</button>
             <div id="yesSuccessMessage" style="display: none;">
                 <p>Your response has been recorded.</p>
             </div>
@@ -142,11 +144,13 @@
     <div id="no" class="container" style="display: none;">
         <h1>Not Compiled</h1>
         <form id="noCompiledForm" action="https://script.google.com/macros/s/AKfycbw6D11FlxXJQaw8ud6z-D8pSeFUsmB68LQQoApKKBLglJOFw0RTPI2eoMzLLA6Cs_hgtw/exec" method="POST">
+            <input type="hidden" id="emailNo" name="email">
+            <input type="hidden" name="formType" value="notCompiled">
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
             <button type="submit">Submit</button>
-            <button class="back-button" onclick="backToIndex()">Back</button>
+            <button type="button" class="back-button" onclick="backToIndex()">Back</button>
             <div id="noSuccessMessage" style="display: none;">
                 <p>Your response has been recorded.</p>
             </div>
@@ -156,12 +160,15 @@
     <script>
         function handleNext() {
             const dropdown = document.getElementById("yesNoDropdown").value;
+            const email = document.getElementById("email").value;
             if (dropdown === "yes") {
                 document.getElementById("index").style.display = "none";
                 document.getElementById("yes").style.display = "block";
+                document.getElementById("emailYes").value = email;
             } else if (dropdown === "no") {
                 document.getElementById("index").style.display = "none";
                 document.getElementById("no").style.display = "block";
+                document.getElementById("emailNo").value = email;
             }
         }
 
@@ -179,8 +186,12 @@
             const formData = new FormData(event.target);
             const xhr = new XMLHttpRequest();
             xhr.open("POST", event.target.action);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    document.getElementById("yesSuccessMessage").style.display = "block";
+                }
+            };
             xhr.send(formData);
-            document.getElementById("yesSuccessMessage").style.display = "block";
         });
 
         // Add event listener to the no compiled form
@@ -189,8 +200,12 @@
             const formData = new FormData(event.target);
             const xhr = new XMLHttpRequest();
             xhr.open("POST", event.target.action);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    document.getElementById("noSuccessMessage").style.display = "block";
+                }
+            };
             xhr.send(formData);
-            document.getElementById("noSuccessMessage").style.display = "block";
         });
     </script>
 </body>
