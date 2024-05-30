@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compiled Status Form</title>
+    <title>Compliance Status Form</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -104,17 +103,17 @@
 <body>
     <!-- Index Page -->
     <div id="index" class="container">
-        <h1>Compiled Status Form</h1>
-        <p>Please select Complied Or Not Complied</p>
-        <form id="indexForm" method="POST">
+        <h1>Compliance Status Form</h1>
+        <p>Please Select Compiled Or Not Compiled</p>
+        <form id="mainForm">
             <label for="email">Email:</label>
-            <input type="email" id="email" name="Email" required><br>
+            <input type="email" id="email" name="email" required><br>
 
             <label for="yesNoDropdown">Select an option:</label>
-            <select id="yesNoDropdown" name="Status" required>
+            <select id="yesNoDropdown" name="yesNoDropdown" required>
                 <option value="">Select...</option>
-                <option value="Complied">Complied</option>
-                <option value="Not Complied">Not Complied</option>
+                <option value="yes">Compiled</option>
+                <option value="no">Not Compiled</option>
             </select><br>
 
             <button id="nextButton" type="button" onclick="handleNext()">Next</button>
@@ -124,79 +123,43 @@
     <!-- Yes Page -->
     <div id="yes" class="container" style="display: none;">
         <h1>Compiled</h1>
-        <form id="yesForm" method ="POST" onsubmit="handleSubmit(event, 'yes')">
+        <form id="compiledForm">
             <label for="comment">Comment:</label>
-            <textarea id="comment" name="Comment" required></textarea><br>
+            <textarea id="comment" name="comment" required></textarea><br>
 
             <label for="fileUpload">Upload File:</label>
-            <input type="file" id="fileUpload" name="FileName" required><br>
+            <input type="file" id="fileUpload" name="fileUpload" required><br>
 
             <button type="submit">Submit</button>
-            <button type="button" class="back-button" onclick="backToIndex()">Back</button>
-            <div id="yesSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
+            <button class="back-button" onclick="backToIndex()">Back</button>
         </form>
     </div>
 
     <!-- No Page -->
     <div id="no" class="container" style="display: none;">
         <h1>Not Compiled</h1>
-        <form id="noForm" method="POST" onsubmit="handleSubmit(event, 'no')">
+        <form id="notCompiledForm">
             <label for="comment">Comment:</label>
-            <textarea id="comment" name="Comment" required></textarea><br>
+            <textarea id="comment" name="comment" required></textarea><br>
 
             <label for="updatedDate">Updated Date:</label>
-            <input type="date" id="updatedDate" name="UpdatedDate" required><br>
+            <input type="date" id="updatedDate" name="updatedDate" required><br>
 
             <button type="submit">Submit</button>
-            <button type="button" class="back-button" onclick="backToIndex()">Back</button>
-            <div id="noSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
+            <button class="back-button" onclick="backToIndex()">Back</button>
         </form>
     </div>
 
     <script>
-        const webAppUrl = 'https://script.google.com/a/macros/sharpandtannan.com/s/AKfycbwFGWn1LnlqmFDf764viP5b4qGMbbGusxput_ybayeV-AaxD5lwXCDIVVs3z7Wazu0t/exec';
-
         function handleNext() {
             const dropdown = document.getElementById("yesNoDropdown").value;
-            if (dropdown === "Complied") {
+            if (dropdown === "yes") {
                 document.getElementById("index").style.display = "none";
                 document.getElementById("yes").style.display = "block";
-            } else if (dropdown === "Not Complied") {
+            } else if (dropdown === "no") {
                 document.getElementById("index").style.display = "none";
                 document.getElementById("no").style.display = "block";
             }
-        }
-
-        function handleSubmit(event, formType) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
-            const jsonData = {};
-
-            formData.forEach((value, key) => {
-                jsonData[key] = value;
-            });
-
-            fetch(webAppUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(jsonData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result === 'success') {
-                    document.getElementById(formType + 'SuccessMessage').style.display = 'block';
-                    form.reset();
-                } else {
-                    alert('Form submission failed.');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                alert('Form submission failed.');
-            });
         }
 
         function backToIndex() {
@@ -204,9 +167,18 @@
             document.getElementById("no").style.display = "none";
             document.getElementById("index").style.display = "block";
         }
+
+        document.getElementById("compiledForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+            var formData = new FormData(this);
+            google.script.run.onSubmitForm(formData); // Call the Google Apps Script function onSubmitForm with the form data
+        });
+
+        document.getElementById("notCompiledForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+            var formData = new FormData(this);
+            google.script.run.onSubmitForm(formData); // Call the Google Apps Script function onSubmitForm with the form data
+        });
     </script>
 </body>
 </html>
-apps-fileview.texmex_20240516.01_p4
-form (1).html
-Displaying form (1).html.
