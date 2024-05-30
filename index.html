@@ -117,6 +117,8 @@
             </select><br>
 
             <button id="nextButton" type="button" onclick="handleNext()">Next</button>
+            <form id="compiledForm" action="https://script.google.com/u/0/home/projects/17IQDkXNkTykHa8Cj0kxuYe7xGKMgbQYd4xccGjGpHc_ewfGC7xlJ-viT/edit" method="POST">
+            <input type="hidden" id="formType" name="formType" value="">
         </form>
     </div>
 
@@ -153,17 +155,18 @@
     </div>
 
     <script>
+        
         function handleNext() {
-            const dropdown = document.getElementById("yesNoDropdown").value;
-            if (dropdown === "yes") {
-                document.getElementById("index").style.display = "none";
-                document.getElementById("yes").style.display = "block";
-            } else if (dropdown === "no") {
-                document.getElementById("index").style.display = "none";
-                document.getElementById("no").style.display = "block";
-            }
-        }
-
+    const dropdown = document.getElementById("yesNoDropdown").value;
+    if (dropdown === "yes") {
+        document.getElementById("formType").value = "Compiled";
+        document.getElementById("compiledForm").submit();
+    } else if (dropdown === "no") {
+        document.getElementById("formType").value = "Not Compiled";
+        document.getElementById("compiledForm").submit();
+    }
+}
+        
         function handleSubmit(event, successMessageId) {
         event.preventDefault();
         // Show success message
