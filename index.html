@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compliance Status Form</title>
+    <title>Compiled status Form</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -103,8 +103,8 @@
 <body>
     <!-- Index Page -->
     <div id="index" class="container">
-        <h1>Compliance Status Form</h1>
-        <p>Please Select Compiled Or Not Compiled</p>
+        <h1>Compiled Status Form</h1>
+        <p>Please select Compiled Or Not Compiled</p>
         <form>
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required><br>
@@ -123,19 +123,23 @@
     <!-- Yes Page -->
     <div id="yes" class="container" style="display: none;">
         <h1>Compiled</h1>
-        <form id="yesForm" onsubmit="handleSubmit(event)">
+        <form onsubmit="handleSubmit(event)">
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
+            <label for="fileUpload">Upload File:</label>
+            <input type="file" id="fileUpload" name="fileUpload" required><br>
+
             <button type="submit">Submit</button>
-            <button class="back-button" type="button" onclick="backToIndex()">Back</button>
+            <button class="back-button" onclick="backToIndex()">Back</button>
+            <div id="yesSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
         </form>
     </div>
 
     <!-- No Page -->
     <div id="no" class="container" style="display: none;">
         <h1>Not Compiled</h1>
-        <form id="noForm" onsubmit="handleSubmit(event)">
+        <form onsubmit="handleSubmit(event)">
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
@@ -143,13 +147,12 @@
             <input type="date" id="updatedDate" name="updatedDate" required><br>
 
             <button type="submit">Submit</button>
-            <button class="back-button" type="button" onclick="backToIndex()">Back</button>
+            <button class="back-button" onclick="backToIndex()">Back</button>
+            <div id="noSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
         </form>
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxI6PqSnx9bnzfqqGCOlrPRPrJ8i9GlOn7p38ufhkH2OYx2a2Sw38_H4Fok88BTBOKrtg/exec'; // Replace with your web app URL
-
         function handleNext() {
             const dropdown = document.getElementById("yesNoDropdown").value;
             if (dropdown === "yes") {
@@ -161,39 +164,11 @@
             }
         }
 
-        function handleSubmit(event) {
-            event.preventDefault();
-
-            const form = event.target;
-            const formData = new FormData(form);
-            const email = document.getElementById("email").value;
-            const yesNoDropdown = document.getElementById("yesNoDropdown").value;
-            const comment = formData.get("comment");
-            const updatedDate = formData.get("updatedDate") || "";
-
-            const data = {
-                email: email,
-                status: yesNoDropdown,
-                comment: comment,
-                date: updatedDate
-            };
-
-            fetch(scriptURL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            }).then(response => response.json())
-              .then(result => {
-                  if (result.result === 'success') {
-                      alert('Form submitted successfully!');
-                  } else {
-                      alert('Failed to submit form');
-                  }
-              }).catch(error => {
-                  alert('Error: ' + error.message);
-              });
+        function handleSubmit(event, successMessageId) {
+        event.preventDefault();
+        // Show success message
+        document.getElementById(successMessageId).style.display = "block";
+        document.getElementById(successMessageId).reset();
         }
 
         function backToIndex() {
