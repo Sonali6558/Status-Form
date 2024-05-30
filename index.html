@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compiled status Form</title>
+    <title>Compliance Status Form</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -103,9 +103,9 @@
 <body>
     <!-- Index Page -->
     <div id="index" class="container">
-        <h1>Compiled Status Form</h1>
-        <p>Please select Compiled Or Not Compiled</p>
-        <form>
+        <h1>Compliance Status Form</h1>
+        <p>Please Select Compiled Or Not Compiled</p>
+        <form id="mainForm">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required><br>
 
@@ -117,15 +117,13 @@
             </select><br>
 
             <button id="nextButton" type="button" onclick="handleNext()">Next</button>
-            <form id="compiledForm" action="https://script.google.com/u/0/home/projects/17IQDkXNkTykHa8Cj0kxuYe7xGKMgbQYd4xccGjGpHc_ewfGC7xlJ-viT/edit" method="POST">
-            <input type="hidden" id="formType" name="formType" value="">
         </form>
     </div>
 
     <!-- Yes Page -->
     <div id="yes" class="container" style="display: none;">
         <h1>Compiled</h1>
-        <form onsubmit="handleSubmit(event)">
+        <form id="compiledForm">
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
@@ -134,14 +132,13 @@
 
             <button type="submit">Submit</button>
             <button class="back-button" onclick="backToIndex()">Back</button>
-            <div id="yesSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
         </form>
     </div>
 
     <!-- No Page -->
     <div id="no" class="container" style="display: none;">
         <h1>Not Compiled</h1>
-        <form onsubmit="handleSubmit(event)">
+        <form id="notCompiledForm">
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
@@ -150,34 +147,50 @@
 
             <button type="submit">Submit</button>
             <button class="back-button" onclick="backToIndex()">Back</button>
-            <div id="noSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
         </form>
     </div>
 
     <script>
-        
         function handleNext() {
-    const dropdown = document.getElementById("yesNoDropdown").value;
-    if (dropdown === "yes") {
-        document.getElementById("formType").value = "Compiled";
-        document.getElementById("compiledForm").submit();
-    } else if (dropdown === "no") {
-        document.getElementById("formType").value = "Not Compiled";
-        document.getElementById("compiledForm").submit();
-    }
-}
-        
-        function handleSubmit(event, successMessageId) {
-        event.preventDefault();
-        // Show success message
-        document.getElementById(successMessageId).style.display = "block";
-        document.getElementById(successMessageId).reset();
+            const dropdown = document.getElementById("yesNoDropdown").value;
+            if (dropdown === "yes") {
+                document.getElementById("index").style.display = "none";
+                document.getElementById("yes").style.display = "block";
+            } else if (dropdown === "no") {
+                document.getElementById("index").style.display = "none";
+                document.getElementById("no").style.display = "block";
+            }
         }
 
         function backToIndex() {
             document.getElementById("yes").style.display = "none";
             document.getElementById("no").style.display = "none";
             document.getElementById("index").style.display = "block";
+        }
+
+        // Google Apps Script submission handler
+        document.getElementById("compiledForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+            google.script.run.onSubmitForm(this); // Call the Google Apps Script function onSubmitForm with the form data
+        });
+
+        document.getElementById("notCompiledForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+            google.script.run.onSubmitForm(this); // Call the Google Apps Script function onSubmitForm with the form data
+        });
+    </script>
+
+    <!-- Google Apps Script -->
+    <script>
+        function onSubmitForm(form) {
+            var formData = new FormData(form);
+            google.script.run.withSuccessHandler(function() {
+                alert('Form submitted successfully!');
+                // Reset the form after submission
+                form.reset();
+                // Navigate back to the index page
+                backToIndex();
+            }).submitForm(formData);
         }
     </script>
 </body>
