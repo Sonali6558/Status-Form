@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compliance Status Form</title>
     <style>
-body {
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f3f4f6;
             margin: 0;
@@ -98,8 +98,7 @@ body {
             flex-direction: column;
             align-items: center;
         }
-
-</style>
+    </style>
 </head>
 <body>
     <!-- Index Page -->
@@ -107,11 +106,9 @@ body {
         <h1>Compliance Status Form</h1>
         <p>Please Select Compiled Or Not Compiled</p>
         <form id="form">
-            <!-- Email Input -->
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required><br>
 
-            <!-- Dropdown for Compiled/Not Compiled -->
             <label for="yesNoDropdown">Select an option:</label>
             <select id="yesNoDropdown" name="yesNoDropdown" required>
                 <option value="">Select...</option>
@@ -119,69 +116,62 @@ body {
                 <option value="no">Not Compiled</option>
             </select><br>
 
-            <!-- Next Button -->
             <button id="nextButton" type="button" onclick="handleNext()">Next</button>
         </form>
     </div>
 
-    <!-- Compiled Page -->
+    <!-- Yes Page -->
     <div id="yes" class="container" style="display: none;">
         <h1>Compiled</h1>
         <form id="compiledForm" onsubmit="handleSubmit(event)">
-            <!-- Comment Textarea -->
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
-            <!-- File Upload Input -->
             <label for="fileUpload">Upload File:</label>
             <input type="file" id="fileUpload" name="fileUpload" required><br>
 
-            <!-- Submit and Back Buttons -->
             <button type="submit">Submit</button>
-            <button class="back-button" onclick="backToIndex()">Back</button>
+            <button class="back-button" type="button" onclick="backToIndex()">Back</button>
         </form>
     </div>
 
-    <!-- Not Compiled Page -->
+    <!-- No Page -->
     <div id="no" class="container" style="display: none;">
         <h1>Not Compiled</h1>
         <form id="notCompiledForm" onsubmit="handleSubmit(event)">
-            <!-- Comment Textarea -->
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
-            <!-- Updated Date Input -->
             <label for="updatedDate">Updated Date:</label>
             <input type="date" id="updatedDate" name="updatedDate" required><br>
 
-            <!-- Submit and Back Buttons -->
             <button type="submit">Submit</button>
-            <button class="back-button" onclick="backToIndex()">Back</button>
+            <button class="back-button" type="button" onclick="backToIndex()">Back</button>
         </form>
     </div>
 
-    <!-- JavaScript -->
     <script>
-        // Function to handle form submission for compiled and not compiled pages
-        function handleSubmit(event) {
+        // Function to handle form submission
+        async function handleSubmit(event) {
             event.preventDefault(); // Prevent default form submission behavior
-            var formData; // Define a variable to store form data
 
-            if (event.target.id === "compiledForm") {
-                formData = new FormData(document.getElementById("compiledForm")); // Get form data for compiled page
-            } else {
-                formData = new FormData(document.getElementById("notCompiledForm")); // Get form data for not compiled page
-            }
+            var formData = new FormData(event.target); // Get form data from the submitted form
 
-            submitFormData(formData); // Call function to submit form data
-        }
+            formData.append("email", document.getElementById("email").value); // Append email to form data
+            formData.append("yesNoDropdown", document.getElementById("yesNoDropdown").value); // Append yesNoDropdown value to form data
 
-        // Function to submit form data to server
-        async function submitFormData(formData) {
+            // Convert formData to JSON object
+            var jsonData = {};
+            formData.forEach((value, key) => jsonData[key] = value);
+            var jsonString = JSON.stringify(jsonData);
+
             try {
                 const response = await fetch("https://script.google.com/macros/s/AKfycbxI6PqSnx9bnzfqqGCOlrPRPrJ8i9GlOn7p38ufhkH2OYx2a2Sw38_H4Fok88BTBOKrtg/exec", { // Replace with your Google Apps Script URL
                     method: "POST", // HTTP POST method
-                    body: formData // Form data to be sent
+                    headers: {
+                        "Content-Type": "application/json" // Set content type to JSON
+                    },
+                    body: jsonString // Form data to be sent as JSON string
                 });
 
                 if (response.ok) {
