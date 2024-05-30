@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compliance Status Form</title>
     <style>
-        body {
+body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f3f4f6;
             margin: 0;
@@ -98,17 +98,20 @@
             flex-direction: column;
             align-items: center;
         }
-    </style>
+
+</style>
 </head>
 <body>
     <!-- Index Page -->
     <div id="index" class="container">
         <h1>Compliance Status Form</h1>
         <p>Please Select Compiled Or Not Compiled</p>
-        <form id="mainForm">
+        <form id="form">
+            <!-- Email Input -->
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required><br>
 
+            <!-- Dropdown for Compiled/Not Compiled -->
             <label for="yesNoDropdown">Select an option:</label>
             <select id="yesNoDropdown" name="yesNoDropdown" required>
                 <option value="">Select...</option>
@@ -116,69 +119,100 @@
                 <option value="no">Not Compiled</option>
             </select><br>
 
+            <!-- Next Button -->
             <button id="nextButton" type="button" onclick="handleNext()">Next</button>
         </form>
     </div>
 
-    <!-- Yes Page -->
+    <!-- Compiled Page -->
     <div id="yes" class="container" style="display: none;">
         <h1>Compiled</h1>
-        <form id="compiledForm">
+        <form id="compiledForm" onsubmit="handleSubmit(event)">
+            <!-- Comment Textarea -->
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
+            <!-- File Upload Input -->
             <label for="fileUpload">Upload File:</label>
             <input type="file" id="fileUpload" name="fileUpload" required><br>
 
+            <!-- Submit and Back Buttons -->
             <button type="submit">Submit</button>
             <button class="back-button" onclick="backToIndex()">Back</button>
         </form>
     </div>
 
-    <!-- No Page -->
+    <!-- Not Compiled Page -->
     <div id="no" class="container" style="display: none;">
         <h1>Not Compiled</h1>
-        <form id="notCompiledForm">
+        <form id="notCompiledForm" onsubmit="handleSubmit(event)">
+            <!-- Comment Textarea -->
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
+            <!-- Updated Date Input -->
             <label for="updatedDate">Updated Date:</label>
             <input type="date" id="updatedDate" name="updatedDate" required><br>
 
+            <!-- Submit and Back Buttons -->
             <button type="submit">Submit</button>
             <button class="back-button" onclick="backToIndex()">Back</button>
         </form>
     </div>
 
+    <!-- JavaScript -->
     <script>
-        function handleNext() {
-            const dropdown = document.getElementById("yesNoDropdown").value;
-            if (dropdown === "yes") {
-                document.getElementById("index").style.display = "none";
-                document.getElementById("yes").style.display = "block";
-            } else if (dropdown === "no") {
-                document.getElementById("index").style.display = "none";
-                document.getElementById("no").style.display = "block";
+        // Function to handle form submission for compiled and not compiled pages
+        function handleSubmit(event) {
+            event.preventDefault(); // Prevent default form submission behavior
+            var formData; // Define a variable to store form data
+
+            if (event.target.id === "compiledForm") {
+                formData = new FormData(document.getElementById("compiledForm")); // Get form data for compiled page
+            } else {
+                formData = new FormData(document.getElementById("notCompiledForm")); // Get form data for not compiled page
+            }
+
+            submitFormData(formData); // Call function to submit form data
+        }
+
+        // Function to submit form data to server
+        async function submitFormData(formData) {
+            try {
+                const response = await fetch("https://script.google.com/macros/s/AKfycbxI6PqSnx9bnzfqqGCOlrPRPrJ8i9GlOn7p38ufhkH2OYx2a2Sw38_H4Fok88BTBOKrtg/exec", { // Replace with your Google Apps Script URL
+                    method: "POST", // HTTP POST method
+                    body: formData // Form data to be sent
+                });
+
+                if (response.ok) {
+                    console.log("Form data submitted successfully!");
+                    // Optionally, redirect to a thank you page or show a success message
+                } else {
+                    console.error("Failed to submit form data.");
+                }
+            } catch (error) {
+                console.error("Error submitting form data:", error);
             }
         }
 
-        function backToIndex() {
-            document.getElementById("yes").style.display = "none";
-            document.getElementById("no").style.display = "none";
-            document.getElementById("index").style.display = "block";
+        // Function to handle click event of Next button
+        function handleNext() {
+            const dropdown = document.getElementById("yesNoDropdown").value; // Get selected value from dropdown
+            if (dropdown === "yes") { // If "Compiled" is selected
+                document.getElementById("index").style.display = "none"; // Hide index page
+                document.getElementById("yes").style.display = "block"; // Show compiled page
+            } else if (dropdown === "no") { // If "Not Compiled" is selected
+                document.getElementById("index").style.display = "none"; // Hide index page
+                document.getElementById("no").style.display = "block"; // Show not compiled page
+            }
         }
 
-        document.getElementById("compiledForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // Prevent default form submission
-            var formData = new FormData(this);
-            google.script.run.onSubmitForm(formData); // Call the Google Apps Script function onSubmitForm with the form data
-        });
-
-        document.getElementById("notCompiledForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // Prevent default form submission
-            var formData = new FormData(this);
-            google.script.run.onSubmitForm(formData); // Call the Google Apps Script function onSubmitForm with the form data
-        });
+        // Function to handle click event of Back button
+        function backToIndex() {
+            document.getElementById("yes").style.display = "none"; // Hide compiled page
+            document.getElementById("no").style.display = "none"; // Hide not compiled page
+            document.getElementById("index").style.display = "block"; // Show index page
+        }
     </script>
 </body>
 </html>
