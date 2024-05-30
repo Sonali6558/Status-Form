@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compliance Status Form</title>
-    <style>
-        body {
+    <title>Compiled status Form</title>
+    <style>body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f3f4f6;
             margin: 0;
@@ -16,7 +15,7 @@
             height: 100vh;
         }
 
-       .container {
+        .container {
             background: #ffffff;
             padding: 30px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -26,7 +25,7 @@
             transition: transform 0.3s ease-in-out;
         }
 
-       .container:hover {
+        .container:hover {
             transform: scale(1.02);
         }
 
@@ -85,11 +84,11 @@
             transform: translateY(-2px);
         }
 
-       .back-button {
+        .back-button {
             background: linear-gradient(to right, #e74c3c, #c0392b);
         }
 
-       .back-button:hover {
+        .back-button:hover {
             background: linear-gradient(to right, #c0392b, #e74c3c);
         }
 
@@ -97,14 +96,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-        }
+}
     </style>
 </head>
 <body>
     <!-- Index Page -->
     <div id="index" class="container">
-        <h1>Compliance Status Form</h1>
-        <p>Please Select Compiled Or Not Compiled</p>
+        <h1>Compiled Status Form</h1>
+        <p>Please select Compiled Or Not Compiled</p>
         <form>
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required><br>
@@ -117,6 +116,9 @@
             </select><br>
 
             <button id="nextButton" type="button" onclick="handleNext()">Next</button>
+            <form id="compiledForm" action="https://script.google.com/u/0/home/projects/1zOOihspzAhBpAJLiHx1qyJIeHALnmCRILUsmHGFcIq5ussr6SVzpwIZ2/edit" method="POST">
+            <input type="hidden" id="formType" name="formType" value="">
+            <input type="hidden" id="sheetId" name="sheetId" value="https://docs.google.com/spreadsheets/d/10yg7JXW0Zkx6KU861ptc3t3VqFBJF-qUwYw_7svWlbY/edit#gid=0">
         </form>
     </div>
 
@@ -132,10 +134,11 @@
 
             <button type="submit">Submit</button>
             <button class="back-button" onclick="backToIndex()">Back</button>
+            <div id="yesSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
         </form>
     </div>
 
-<!-- No Page -->
+    <!-- No Page -->
     <div id="no" class="container" style="display: none;">
         <h1>Not Compiled</h1>
         <form onsubmit="handleSubmit(event)">
@@ -147,6 +150,7 @@
 
             <button type="submit">Submit</button>
             <button class="back-button" onclick="backToIndex()">Back</button>
+            <div id="noSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
         </form>
     </div>
 
@@ -154,32 +158,19 @@
         function handleNext() {
             const dropdown = document.getElementById("yesNoDropdown").value;
             if (dropdown === "yes") {
-                document.getElementById("index").style.display = "none";
-                document.getElementById("yes").style.display = "block";
+                document.getElementById("formType").value = "Compiled";
+                document.getElementById("compiledForm").submit();
             } else if (dropdown === "no") {
-                document.getElementById("index").style.display = "none";
-                document.getElementById("no").style.display = "block";
+                document.getElementById("formType").value = "Not Compiled";
+                document.getElementById("compiledForm").submit();
             }
         }
-
-        function handleSubmit(event) {
+        
+        function handleSubmit(event, successMessageId) {
             event.preventDefault();
-            const formData = new FormData();
-            const fileInput = document.getElementById("fileUpload");
-            const file = fileInput.files[0];
-            formData.append("file", file);
-            formData.append("email", document.getElementById("email").value);
-            formData.append("yesNoDropdown", document.getElementById("yesNoDropdown").value);
-            formData.append("comment", document.getElementById("comment").value);
-            formData.append("updatedDate", document.getElementById("updatedDate").value);
-
-            fetch("https://script.google.com/macros/s/AKfycbzBQHfnF9xuixxdsukU5RD_BYYpBdC80t8bs0R7xu-Svk443I7bxidprxeRGzL6I_1EuA/exec", {
-                method: "POST",
-                body: formData
-            })
-           .then(response => response.json())
-           .then(data => console.log(data))
-           .catch(error => console.error(error));
+            // Show success message
+            document.getElementById(successMessageId).style.display = "block";
+            document.getElementById(successMessageId).reset();
         }
 
         function backToIndex() {
