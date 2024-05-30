@@ -106,7 +106,7 @@
     <div id="index" class="container">
         <h1>Compliance Status Form</h1>
         <p>Please Select Compiled Or Not Compiled</p>
-        <form id="form">
+        <form id="mainForm">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required><br>
 
@@ -158,22 +158,14 @@
 
             var formData = new FormData(event.target); // Get form data from the submitted form
 
-            formData.append("email", document.getElementById("email").value); // Append email to form data
-            formData.append("yesNoDropdown", document.getElementById("yesNoDropdown").value); // Append yesNoDropdown value to form data
-
-            // Convert formData to JSON object
-            var jsonData = {};
-            formData.forEach((value, key) => jsonData[key] = value);
-            var jsonString = JSON.stringify(jsonData);
+            // Append email and yesNoDropdown values from the main form to formData
+            formData.append("email", document.getElementById("email").value);
+            formData.append("yesNoDropdown", document.getElementById("yesNoDropdown").value);
 
             try {
-                const response = await fetch("https://script.google.com/macros/s/AKfycbxI6PqSnx9bnzfqqGCOlrPRPrJ8i9GlOn7p38ufhkH2OYx2a2Sw38_H4Fok88BTBOKrtg/exec
-", { // Replace with your Google Apps Script URL
+                const response = await fetch("https://script.google.com/macros/s/AKfycbzBQHfnF9xuixxdsukU5RD_BYYpBdC80t8bs0R7xu-Svk443I7bxidprxeRGzL6I_1EuA/exec", { // Replace with your Google Apps Script URL
                     method: "POST", // HTTP POST method
-                    headers: {
-                        "Content-Type": "application/json" // Set content type to JSON
-                    },
-                    body: jsonString // Form data to be sent as JSON string
+                    body: formData // Send form data
                 });
 
                 if (response.ok) {
