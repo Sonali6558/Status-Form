@@ -105,7 +105,7 @@
     <div id="index" class="container">
         <h1>Compiled Status Form</h1>
         <p>Please select Compiled Or Not Compiled</p>
-        <form action="https://script.google.com/macros/s/AKfycbwCTU1LJlmvZGpo9ELPmLgbV0MH-hUEl9SXuHbdjUsjmJPlBJwgZQ5tqkWTPUW8BpCPhA/exec" method="post" enctype="multipart/form-data">
+        <form id="indexForm" method="post" enctype="multipart/form-data">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required><br>
 
@@ -123,7 +123,7 @@
     <!-- Yes Page -->
     <div id="yes" class="container" style="display: none;">
         <h1>Compiled</h1>
-        <form action="https://script.google.com/macros/s/AKfycbwCTU1LJlmvZGpo9ELPmLgbV0MH-hUEl9SXuHbdjUsjmJPlBJwgZQ5tqkWTPUW8BpCPhA/exec" method="post" enctype="multipart/form-data">
+        <form id="yesForm" action="https://script.google.com/macros/s/AKfycbwCTU1LJlmvZGpo9ELPmLgbV0MH-hUEl9SXuHbdjUsjmJPlBJwgZQ5tqkWTPUW8BpCPhA/exec" method="post" enctype="multipart/form-data" onsubmit="handleSubmit(event, 'yesSuccessMessage')">
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
@@ -139,7 +139,7 @@
     <!-- No Page -->
     <div id="no" class="container" style="display: none;">
         <h1>Not Compiled</h1>
-        <form action="https://script.google.com/macros/s/AKfycbwCTU1LJlmvZGpo9ELPmLgbV0MH-hUEl9SXuHbdjUsjmJPlBJwgZQ5tqkWTPUW8BpCPhA/exec" method="post" enctype="multipart/form-data">
+        <form id="noForm" action="https://script.google.com/macros/s/AKfycbwCTU1LJlmvZGpo9ELPmLgbV0MH-hUEl9SXuHbdjUsjmJPlBJwgZQ5tqkWTPUW8BpCPhA/exec" method="post" enctype="multipart/form-data" onsubmit="handleSubmit(event, 'noSuccessMessage')">
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment" required></textarea><br>
 
@@ -166,8 +166,21 @@
 
         function handleSubmit(event, successMessageId) {
             event.preventDefault();
-            document.getElementById(successMessageId).style.display = "block";
-            document.getElementById(successMessageId).reset();
+            const form = event.target;
+            const formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+            }).then(response => {
+                if (response.ok) {
+                    document.getElementById(successMessageId).style.display = "block";
+                    form.reset();
+                } else {
+                    alert('There was an error submitting the form. Please try again.');
+                }
+            }).catch(error => {
+                alert('There was an error submitting the form. Please try again.');
+            });
         }
 
         function backToIndex() {
