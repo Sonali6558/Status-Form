@@ -4,191 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compiled status Form</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f3f4f6;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .container {
-            background: #ffffff;
-            padding: 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-            width: 350px;
-            text-align: center;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .container:hover {
-            transform: scale(1.02);
-        }
-
-        h1 {
-            color: #2c3e50;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        label {
-            font-weight: bold;
-            color: #34495e;
-            text-align: left;
-            margin-bottom: 5px;
-        }
-
-        p {
-            margin: 15px 0;
-            font-size: 18px;
-            color: #34495e;
-        }
-
-        input, select, textarea {
-            display: block;
-            width: calc(100% - 20px);
-            margin: 10px auto;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #bdc3c7;
-            font-size: 16px;
-            background-color: #ecf0f1;
-        }
-
-        textarea {
-            resize: none;
-        }
-
-        button {
-            display: inline-block;
-            width: calc(50% - 12px);
-            padding: 10px 20px;
-            margin: 10px 6px;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            background: linear-gradient(to right, #3498db, #2980b9);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
-        }
-
-        button:hover {
-            background: linear-gradient(to right, #2980b9, #3498db);
-            transform: translateY(-2px);
-        }
-
-        .back-button {
-            background: linear-gradient(to right, #e74c3c, #c0392b);
-        }
-
-        .back-button:hover {
-            background: linear-gradient(to right, #c0392b, #e74c3c);
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-    </style>
 </head>
 <body>
-    <!-- Index Page -->
-    <div id="index" class="container">
-        <h1>Compiled Status Form</h1>
-        <p>Please select Compiled Or Not Compiled</p>
-        <form id="indexForm" method="post" enctype="multipart/form-data">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required><br>
+    <h1>Compiled Status Form</h1>
+    <form id="statusForm" action="https://script.google.com/macros/s/AKfycbwCTU1LJlmvZGpo9ELPmLgbV0MH-hUEl9SXuHbdjUsjmJPlBJwgZQ5tqkWTPUW8BpCPhA/exec" method="post" enctype="multipart/form-data">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
+        
+        <label for="status">Select an option:</label>
+        <select id="status" name="status" required>
+            <option value="">Select...</option>
+            <option value="Compiled">Compiled</option>
+            <option value="Not Compiled">Not Compiled</option>
+        </select><br>
 
-            <label for="yesNoDropdown">Select an option:</label>
-            <select id="yesNoDropdown" name="yesNoDropdown" required>
-                <option value="">Select...</option>
-                <option value="yes">Compiled</option>
-                <option value="no">Not Compiled</option>
-            </select><br>
+        <label for="comment">Comment:</label>
+        <textarea id="comment" name="comment" required></textarea><br>
 
-            <button id="nextButton" type="button" onclick="handleNext()">Next</button>
-        </form>
-    </div>
-
-    <!-- Yes Page -->
-    <div id="yes" class="container" style="display: none;">
-        <h1>Compiled</h1>
-        <form id="yesForm" action="https://script.google.com/macros/s/AKfycbwCTU1LJlmvZGpo9ELPmLgbV0MH-hUEl9SXuHbdjUsjmJPlBJwgZQ5tqkWTPUW8BpCPhA/exec" method="post" enctype="multipart/form-data" onsubmit="handleSubmit(event, 'yesSuccessMessage')">
-            <label for="comment">Comment:</label>
-            <textarea id="comment" name="comment" required></textarea><br>
-
+        <div id="fileField">
             <label for="fileUpload">Upload File:</label>
-            <input type="file" id="fileUpload" name="fileUpload" required><br>
+            <input type="file" id="fileUpload" name="fileUpload"><br>
+        </div>
 
-            <button type="submit">Submit</button>
-            <button class="back-button" type="button" onclick="backToIndex()">Back</button>
-            <div id="yesSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
-        </form>
-    </div>
+        <label for="updatedDate">Updated Date:</label>
+        <input type="date" id="updatedDate" name="updatedDate"><br>
 
-    <!-- No Page -->
-    <div id="no" class="container" style="display: none;">
-        <h1>Not Compiled</h1>
-        <form id="noForm" action="https://script.google.com/macros/s/AKfycbwCTU1LJlmvZGpo9ELPmLgbV0MH-hUEl9SXuHbdjUsjmJPlBJwgZQ5tqkWTPUW8BpCPhA/exec" method="post" enctype="multipart/form-data" onsubmit="handleSubmit(event, 'noSuccessMessage')">
-            <label for="comment">Comment:</label>
-            <textarea id="comment" name="comment" required></textarea><br>
-
-            <label for="updatedDate">Updated Date:</label>
-            <input type="date" id="updatedDate" name="updatedDate" required><br>
-
-            <button type="submit">Submit</button>
-            <button class="back-button" type="button" onclick="backToIndex()">Back</button>
-            <div id="noSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
-        </form>
-    </div>
+        <button type="submit">Submit</button>
+    </form>
 
     <script>
-        function handleNext() {
-            const dropdown = document.getElementById("yesNoDropdown").value;
-            if (dropdown === "yes") {
-                document.getElementById("index").style.display = "none";
-                document.getElementById("yes").style.display = "block";
-            } else if (dropdown === "no") {
-                document.getElementById("index").style.display = "none";
-                document.getElementById("no").style.display = "block";
+        document.getElementById("status").addEventListener("change", function() {
+            var status = this.value;
+            var fileField = document.getElementById("fileField");
+
+            if (status === "Compiled") {
+                fileField.style.display = "block";
+            } else {
+                fileField.style.display = "none";
             }
-        }
-
-        function handleSubmit(event, successMessageId) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-            }).then(response => {
-                if (response.ok) {
-                    document.getElementById(successMessageId).style.display = "block";
-                    form.reset();
-                } else {
-                    alert('There was an error submitting the form. Please try again.');
-                }
-            }).catch(error => {
-                console.error('Error:', error);
-                alert('There was an error submitting the form. Please try again.');
-            });
-        }
-
-        function backToIndex() {
-            document.getElementById("yes").style.display = "none";
-            document.getElementById("no").style.display = "none";
-            document.getElementById("index").style.display = "block";
-        }
+        });
     </script>
 </body>
 </html>
