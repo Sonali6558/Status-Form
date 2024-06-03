@@ -164,6 +164,11 @@ function handleNext() {
         document.getElementById("no").style.display = "block";
     }
 }
+    function backToIndex() {
+            document.getElementById("yes").style.display = "none";
+            document.getElementById("no").style.display = "none";
+            document.getElementById("index").style.display = "block";
+}
 
 function handleSubmit(event, successMessageId) {
     event.preventDefault();
