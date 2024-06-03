@@ -16,7 +16,7 @@
             height: 100vh;
         }
 
-       .container {
+        .container {
             background: #ffffff;
             padding: 30px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -26,7 +26,7 @@
             transition: transform 0.3s ease-in-out;
         }
 
-       .container:hover {
+        .container:hover {
             transform: scale(1.02);
         }
 
@@ -85,11 +85,11 @@
             transform: translateY(-2px);
         }
 
-       .back-button {
+        .back-button {
             background: linear-gradient(to right, #e74c3c, #c0392b);
         }
 
-       .back-button:hover {
+        .back-button:hover {
             background: linear-gradient(to right, #c0392b, #e74c3c);
         }
 
@@ -105,7 +105,8 @@
     <div id="index" class="container">
         <h1>Compiled Status Form</h1>
         <p>Please select Compiled Or Not Compiled</p>
-        <form>
+        <form action="" method="POST">
+
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required><br>
 
@@ -120,107 +121,74 @@
         </form>
     </div>
 
-    <!-- Yes Page -->
-    <div id="yes" class="container" style="display: none;">
-        <h1>Compiled</h1>
-        <form onsubmit="handleSubmit(event, 'yesSuccessMessage')">
-            <label for="comment">Comment:</label>
-            <textarea id="comment" name="comment" required></textarea><br>
+<!-- Yes Page -->
+<div id="yes" class="container" style="display: none;">
+    <h1>Compiled</h1>
+    <form id="compiledForm" onsubmit="handleSubmit(event, 'yesSuccessMessage')" enctype="multipart/form-data">
+        <label for="commentCompiled">Comment:</label>
+        <textarea id="commentCompiled" name="commentCompiled" required></textarea><br>
 
-            <label for="fileUpload">Upload File:</label>
-            <input type="file" id="fileUpload" name="fileUpload" required><br>
+        <label for="fileUpload">Upload File:</label>
+        <input type="file" id="fileUpload" name="fileUpload" required><br>
 
-            <button type="submit">Submit</button>
-            <button class="back-button" onclick="backToIndex()">Back</button>
-           <div id="yesSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
-        </form>
-    </div>
+        <button type="submit">Submit</button>
+        <button class="back-button" onclick="backToIndex()">Back</button>
+        <div id="yesSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
+    </form>
+</div>
 
-    <!-- No Page -->
-    <div id="no" class="container" style="display: none;">
-        <h1>Not Compiled</h1>
-        <form onsubmit="handleSubmit(event, 'noSuccessMessage')">
-            <label for="comment">Comment:</label>
-            <textarea id="comment" name="comment" required></textarea><br>
 
-            <label for="updatedDate">Updated Date:</label>
-            <input type="date" id="updatedDate" name="updatedDate" required><br>
+<!-- No Page -->
+<div id="no" class="container" style="display: none;">
+    <h1>Not Compiled</h1>
+    <form id="notCompiledForm" onsubmit="handleSubmit(event, 'noSuccessMessage')">
+        <label for="commentNotCompiled">Comment:</label>
+        <textarea id="commentNotCompiled" name="commentNotCompiled" required></textarea><br>
 
-            <button type="submit">Submit</button>
-            <button class="back-button" onclick="backToIndex()">Back</button>
-            <div id="noSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
-        </form>
-    </div>
+        <label for="updatedDate">Updated Date:</label>
+        <input type="date" id="updatedDate" name="updatedDate" required><br>
 
-    <script>
-        function handleNext() {
-            const dropdown = document.getElementById("yesNoDropdown").value;
-            if (dropdown === "yes") {
-                document.getElementById("index").style.display = "none";
-                document.getElementById("yes").style.display = "block";
-            } else if (dropdown === "no") {
-                document.getElementById("index").style.display = "none";
-                document.getElementById("no").style.display = "block";
-            }
+        <button type="submit">Submit</button>
+        <button class="back-button" onclick="backToIndex()">Back</button>
+        <div id="noSuccessMessage" style="display: none; color: green;">Form submitted successfully</div>
+    </form>
+</div>
+<script>
+function handleNext() {
+    const dropdown = document.getElementById("yesNoDropdown").value;
+    if (dropdown === "yes") {
+        document.getElementById("index").style.display = "none";
+        document.getElementById("yes").style.display = "block";
+    } else if (dropdown === "no") {
+        document.getElementById("index").style.display = "none";
+        document.getElementById("no").style.display = "block";
+    }
+}
+
+function handleSubmit(event, successMessageId) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    // Make a POST request to your Google Apps Script web app URL
+    fetch('https://script.google.com/macros/s/AKfycbx5f4od25TsCuLk2UPf2ZxK3Lf-2bPhJKx4mDolcQdcOjaEH8YX9zKBJs3C0g0VglKEWQ/exec', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            // Show success message
+            document.getElementById(successMessageId).style.display = "block";
+            // Reset form
+            form.reset();
+        } else {
+            throw new Error('Form submission failed');
         }
-
-        function handleSubmit(event, successMessageId) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const email = formData.get("email");
-            const comment = formData.get("comment");
-            const updatedDate = formData.get("updatedDate");
-            const fileUpload = formData.get("fileUpload");
-
-            // Send form data to Google Sheets
-            const sheetId = 'YOUR_SHEET_ID';
-            const url = `https://docs.google.com/spreadsheets/d/${sheetId}/formResponse`;
-            const payload = {
-                "email": email,
-                "comment": comment,
-                "updatedDate": updatedDate,
-                "fileUpload": fileUpload,
-            };
-            const options = {
-                method: "POST",
-                payload: payload,
-                muteHttpExceptions: true,
-            };
-            fetch(url, options)
-                .then((response) => {
-                    if (response.status === 200) {
-                        // Send file to Google Drive
-                        const driveFolderId = 'YOUR_DRIVE_FOLDER_ID';
-                        const file = new FormData();
-                        file.append("fileUpload", fileUpload);
-                        const metadata = {
-                            name: fileUpload.name,
-                            parents: [driveFolderId],
-                        };
-                        const accessToken = ScriptApp.getOAuthToken();
-                        const headers = {
-                            Authorization: "Bearer " + accessToken,
-                        };
-                        const options = {
-                            method: "POST",
-                            headers: headers,
-                            payload: file,
-                        };
-                        const url = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
-                        fetch(url, options)
-                            .then((response) => {
-                                if (response.status === 200) {
-                                    // Get file URL and save it in Google Sheets
-                                    const fileId = JSON.parse(response.contentText).id;
-                                    const fileUrl = `https://drive.google.com/file/d/${fileId}/view`;
-                                    const sheet = SpreadsheetApp.openById(sheetId).getSheetByName("Sheet1");
-                                    const lastRow = sheet.getLastRow();
-                                    const range = sheet.getRange(lastRow, 5);
-                                    range.setValue(fileUrl);
-
-                                    // Show success message
-                                    document.getElementById(successMessageId).style.display = "block";
-                                    document.getElementById(successMessageId).reset();
-                                } else {
-                                    throw new Error("Failed to upload file. 
-================
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+</script>
+</body>
+</html>
